@@ -1,9 +1,18 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import MiniSearch, { SearchResult } from "minisearch";
 
 type Doc = { id: string; type: string; slug: string; title: string; excerpt?: string };
+
+// Define a proper type for the search result fields we're extracting
+type SearchDoc = {
+  id: string;
+  type: string;
+  slug: string;
+  title: string;
+  excerpt?: string;
+};
 
 export default function SearchPage() {
   const [q, setQ] = useState("");
@@ -30,13 +39,17 @@ export default function SearchPage() {
     if (!ms) return;
     const searchResults = ms.search(q, { prefix: true });
     // Convert SearchResult to Doc type
-    const docs: Doc[] = searchResults.map(result => ({
-      id: result.id as string,
-      type: (result as any).type,
-      slug: (result as any).slug,
-      title: (result as any).title,
-      excerpt: (result as any).excerpt,
-    }));
+    const docs: Doc[] = searchResults.map(result => {
+      // Extract the stored fields from the result
+      const searchDoc = result as unknown as SearchDoc & SearchResult;
+      return {
+        id: searchDoc.id,
+        type: searchDoc.type,
+        slug: searchDoc.slug,
+        title: searchDoc.title,
+        excerpt: searchDoc.excerpt,
+      };
+    });
     setRes(q ? docs : []);
   }, [q, ms]);
 

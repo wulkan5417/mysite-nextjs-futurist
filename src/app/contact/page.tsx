@@ -9,9 +9,9 @@ export default function ContactPage() {
         Email: <a className="underline text-cyan-400" href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
       </p>
       <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4">
-        {/* Google Form iframe code'ini shu yerga joylang */}
+        {/* Google Form iframe code&#39;ini shu yerga joylang */}
         {/* <iframe src="FORM_URL" className="w-full h-[600px]" /> */}
-        <p className="text-slate-400 text-sm">Google Form URL'ingizni qo'shing.</p>
+        <p className="text-slate-400 text-sm">Google Form URL&#39;ingizni qo&#39;shing.</p>
       </div>
     </div>
   );

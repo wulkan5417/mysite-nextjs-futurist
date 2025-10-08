@@ -6,7 +6,7 @@ import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import rehypePrettyCode from "rehype-pretty-code";
+import rehypePrettyCode, { Options as RehypePrettyCodeOptions } from "rehype-pretty-code";
 import readingTime from "reading-time";
 import GithubSlugger from "github-slugger";
 import { mdxComponents } from "@/components/mdx-components";
@@ -27,7 +27,7 @@ export function getSlugs(collection: Collection) {
     .map((f) => f.replace(/\.mdx?$/, ""));
 }
 
-export function getAllMeta<T extends Record<string, any>>(collection: Collection): (T & { slug: string })[] {
+export function getAllMeta<T extends Record<string, unknown>>(collection: Collection): (T & { slug: string })[] {
   const dir = getDir(collection);
   if (!fs.existsSync(dir)) return [];
   const files = fs.readdirSync(dir).filter((f) => f.endsWith(".md") || f.endsWith(".mdx"));
@@ -37,7 +37,11 @@ export function getAllMeta<T extends Record<string, any>>(collection: Collection
     const slug = file.replace(/\.mdx?$/, "");
     return { slug, ...(data as T) };
   });
-  return items.sort((a: any, b: any) => (b.date ? +new Date(b.date) : 0) - (a.date ? +new Date(a.date) : 0));
+  return items.sort((a, b) => {
+    const dateA = a.date ? new Date(a.date as string | number) : new Date(0);
+    const dateB = b.date ? new Date(b.date as string | number) : new Date(0);
+    return dateB.getTime() - dateA.getTime();
+  });
 }
 
 // Sarlavhalarni (h2/h3) chiqarish — TOC uchun
@@ -60,7 +64,10 @@ function extractHeadings(markdown: string) {
   return headings;
 }
 
-export async function getMdxBySlug<T extends Record<string, any>>(collection: Collection, slug: string) {
+// Define proper types for rehype plugins
+type RehypePlugin = [typeof rehypePrettyCode, RehypePrettyCodeOptions] | typeof rehypeSlug | [typeof rehypeAutolinkHeadings, { behavior: string }];
+
+export async function getMdxBySlug<T extends Record<string, unknown>>(collection: Collection, slug: string) {
   const fullPath = path.join(getDir(collection), `${slug}.mdx`);
   if (!fs.existsSync(fullPath)) throw new Error("Not found");
   const source = fs.readFileSync(fullPath, "utf8");
@@ -84,7 +91,7 @@ export async function getMdxBySlug<T extends Record<string, any>>(collection: Co
               keepBackground: false,
             },
           ],
-        ] as any,
+        ] as RehypePlugin[],
       },
     },
     components: mdxComponents,
