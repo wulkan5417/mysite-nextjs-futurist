@@ -1,0 +1,32 @@
+{
+  "schema": {
+    "id": "slug",
+    "fields": [
+      "title",
+      "excerpt"
+    ]
+  },
+  "documents": [
+    {
+      "id": "blog-hello-world",
+      "type": "blog",
+      "slug": "hello-world",
+      "title": "Hello World",
+      "excerpt": "Birinchi postim — futuristik saytimga xush kelibsiz!"
+    },
+    {
+      "id": "lessons-intro",
+      "type": "lessons",
+      "slug": "intro",
+      "title": "Kirish darsi",
+      "excerpt": ""
+    },
+    {
+      "id": "projects-my-first-project",
+      "type": "projects",
+      "slug": "my-first-project",
+      "title": "My First Project",
+      "excerpt": "Futuristik UI bilan oddiy portfolio loyihasi."
+    }
+  ]
+}
